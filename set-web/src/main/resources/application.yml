@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: set-web
+
+  profiles:
+      active: dev
+
+server:
+  port: 8080

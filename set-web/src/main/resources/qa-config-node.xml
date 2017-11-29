@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ConfigNodeInfo appName="choose_car_qa_env" baseFolder="/yongche/config/" mode="0">
+    <remoteServer url="http://10.0.13.11:9000/rpc/download" token="nh64espi" connectTimeout="2000" readTimeout="2000"/>
+
+    <settings>
+        <setting key="remoteCheckInterval">60</setting>
+    </settings>
+</ConfigNodeInfo>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: jmind:jmind-core-support:5.0.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/maven-repository/jmind/jmind-core-support/5.0.0-SNAPSHOT/jmind-core-support-5.0.0-20161213.191325-43.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/maven-repository/jmind/jmind-core-support/5.0.0-SNAPSHOT/jmind-core-support-5.0.0-20161213.191325-43-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/maven-repository/jmind/jmind-core-support/5.0.0-SNAPSHOT/jmind-core-support-5.0.0-20161213.191325-43-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
