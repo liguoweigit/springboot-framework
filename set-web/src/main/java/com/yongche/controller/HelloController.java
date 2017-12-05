@@ -1,8 +1,11 @@
 package com.yongche.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.yongche.cache.CacheManager;
 import com.yongche.dao.CarTypeDao;
+import com.yongche.enumdata.CacheKeyEnum;
 import com.yongche.factory.MangoFactoryBean;
 import com.yongche.service.TestService;
 import com.yongche.util.SpringUtil;
@@ -46,7 +49,6 @@ public class HelloController {
         //carTypeDao.getAllCarTypeIds(2);
         map.put("hello",arg);
         Redis redis = CacheManager.getInstance().getRedis();
-        redis.set("aaa","bbb");
         try {
             Thread.sleep(1000L);
         } catch (InterruptedException e) {
@@ -64,5 +66,20 @@ public class HelloController {
     public String heartBeat(HttpServletRequest request, HttpServletResponse response){
         response.addHeader("Coyote","Coyote");
         return "ok";
+    }
+
+    @RequestMapping(value = "accept/{orderId}")
+    public Object getAccpetOrderNum(@PathVariable long orderId){
+        Map<String,Object> map = new HashMap<String,Object>();
+        Redis redis = CacheManager.getInstance().getRedis();
+        String key = CacheKeyEnum.ACCEPT_ORDER_NUM.toKey(orderId);
+        String val = redis.get(key);
+        JSONObject jsonObject = JSON.parseObject(val);
+        int num = 0;
+        if(null != jsonObject) {
+            num = jsonObject.getIntValue("order_accept_num");
+        }
+        map.put("num",num);
+        return map;
     }
 }

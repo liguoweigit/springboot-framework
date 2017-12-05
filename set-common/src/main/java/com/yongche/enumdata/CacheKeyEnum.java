@@ -40,6 +40,8 @@ public enum CacheKeyEnum {
     TEMPLATE_ID("id_tempalte_{0}",CacheConstants.TIME_10_YEAR),
     ID_SEQUENCE("id_sequence:{0}",CacheConstants.TIME_10_YEAR),
 
+    ACCEPT_ORDER_NUM("response_driver_num:{0}",CacheConstants.TIME_1_DAY),
+
     CHARGE_RPC_ORDER_INFO("ChargeRpc_order_info:{0}",CacheConstants.TIME_30_MINS);
 
 
