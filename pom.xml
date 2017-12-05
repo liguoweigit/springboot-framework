@@ -14,6 +14,7 @@
         <module>set-dao</module>
         <module>set-init</module>
         <module>set-common</module>
+        <module>set-mq</module>
     </modules>
 
     <properties>
@@ -89,6 +90,11 @@
             <dependency>
                 <groupId>com.yongche</groupId>
                 <artifactId>set-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yongche</groupId>
+                <artifactId>set-mq</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
