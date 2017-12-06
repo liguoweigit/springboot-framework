@@ -50,9 +50,13 @@
             <groupId>com.yongche</groupId>
             <artifactId>set-cache</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.yongche</groupId>
             <artifactId>set-mq</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>com.yongche.psf</groupId>
+            <artifactId>psf-client</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

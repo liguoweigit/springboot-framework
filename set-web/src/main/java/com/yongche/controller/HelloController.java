@@ -7,6 +7,7 @@ import com.yongche.cache.CacheManager;
 import com.yongche.dao.CarTypeDao;
 import com.yongche.enumdata.CacheKeyEnum;
 import com.yongche.factory.MangoFactoryBean;
+import com.yongche.service.PsfDispatchService;
 import com.yongche.service.TestService;
 import com.yongche.util.SpringUtil;
 import jmind.core.redis.Redis;
@@ -38,6 +39,9 @@ public class HelloController {
     @Autowired
     private CarTypeDao carTypeDao;
 
+    @Autowired
+    private PsfDispatchService psfDispatchService;
+
 
     @RequestMapping(value = "/hello/{arg}")
     public Object hello(@PathVariable String arg){
@@ -68,18 +72,19 @@ public class HelloController {
         return "ok";
     }
 
-    @RequestMapping(value = "accept/{orderId}")
-    public Object getAccpetOrderNum(@PathVariable long orderId){
+    /**
+     * 调用PSF接口示例
+     * @param driverId
+     * @return
+     */
+    @RequestMapping(value = "accept/{driverId}")
+    public Object getAccpetOrderNum(@PathVariable long driverId){
         Map<String,Object> map = new HashMap<String,Object>();
-        Redis redis = CacheManager.getInstance().getRedis();
-        String key = CacheKeyEnum.ACCEPT_ORDER_NUM.toKey(orderId);
-        String val = redis.get(key);
-        JSONObject jsonObject = JSON.parseObject(val);
-        int num = 0;
+        JSONObject jsonObject = psfDispatchService.getAcceptNumByDriverId(driverId);
         if(null != jsonObject) {
-            num = jsonObject.getIntValue("order_accept_num");
+            map.put(String.valueOf(driverId),jsonObject);
         }
-        map.put("num",num);
         return map;
     }
+
 }
