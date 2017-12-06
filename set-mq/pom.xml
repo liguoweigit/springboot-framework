@@ -20,6 +20,10 @@
             <groupId>com.yongche</groupId>
             <artifactId>set-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yongche</groupId>
+            <artifactId>set-init</artifactId>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka -->
         <dependency>
             <groupId>org.apache.kafka</groupId>

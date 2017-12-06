@@ -51,6 +51,10 @@
             <artifactId>set-cache</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.yongche</groupId>
+            <artifactId>set-mq</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>

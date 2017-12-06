@@ -29,6 +29,7 @@
         <common-lang3.version>3.7</common-lang3.version>
         <snakeyaml.version>1.19</snakeyaml.version>
         <jmind-core.version>5.0.0-SNAPSHOT</jmind-core.version>
+        <psf.version>1.1.4</psf.version>
         <!-- Plugins Version -->
         <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
@@ -72,6 +73,11 @@
     <!-- dependencyManagement管理的包,各个子包用时再引 -->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.yongche.psf</groupId>
+                <artifactId>psf-client</artifactId>
+                <version>${psf.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.yongche</groupId>
                 <artifactId>set-cache</artifactId>
