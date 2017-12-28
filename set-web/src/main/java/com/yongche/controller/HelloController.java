@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -87,4 +88,27 @@ public class HelloController {
         return map;
     }
 
+    @RequestMapping(value = "schedule/get/{driverId}")
+    public Object getScheduleByDriverId(@PathVariable long driverId){
+        Map<String,Object> map = new HashMap<String,Object>();
+        Redis redis = CacheManager.getInstance().getRedis();
+        List<String> scheduleList = redis.zrange(String.valueOf(driverId),0,-1);
+        map.put(String.valueOf(driverId),scheduleList);
+        return map;
+    }
+
+    @RequestMapping(value = "schedule/del/{driverId}")
+    public Object delScheduleByDriverId(@PathVariable long driverId){
+        Map<String,Object> map = new HashMap<String,Object>();
+        Redis redis = CacheManager.getInstance().getRedis();
+        String driverIdStr = String.valueOf(driverId);
+        boolean exists = redis.exists(driverIdStr);
+        if(exists){
+            long l = redis.del(driverIdStr);
+            map.put(driverIdStr,l);
+        }else{
+            map.put(driverIdStr,"this driver no schedules");
+        }
+        return map;
+    }
 }
