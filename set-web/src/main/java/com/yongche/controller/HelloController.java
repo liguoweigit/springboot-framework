@@ -111,4 +111,14 @@ public class HelloController {
         }
         return map;
     }
+
+    @RequestMapping(value = "bidding/{orderId}")
+    public Object biddingByOrder(@PathVariable long orderId){
+        Map<String,Object> map = new HashMap<String,Object>();
+        Redis redis = CacheManager.getInstance().getRedis();
+        String biddingKey = CacheKeyEnum.BIDDING_INFO_KEY.toKey(orderId);
+        String biddingInfoValue = CacheManager.getInstance().getRedis().get(biddingKey);
+        map.put(String.valueOf(orderId),biddingInfoValue);
+        return map;
+    }
 }
