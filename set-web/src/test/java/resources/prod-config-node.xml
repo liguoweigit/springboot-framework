@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConfigNodeInfo appName="choose_car_production" baseFolder="/yongche/config/" mode="0">
+    <remoteServer url="https://cnode-ch.yongche.com/rpc/download" token="r49jm45n" connectTimeout="2000" readTimeout="2000"/>
+    <settings>
+        <setting key="remoteCheckInterval">6</setting>
+    </settings>
+</ConfigNodeInfo>

@@ -74,6 +74,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>1.5.8.RELEASE</version>
+            </dependency>
+            <dependency>
                 <groupId>com.yongche.psf</groupId>
                 <artifactId>psf-client</artifactId>
                 <version>${psf.version}</version>
