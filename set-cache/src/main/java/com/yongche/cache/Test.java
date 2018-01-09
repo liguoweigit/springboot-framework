@@ -1,6 +1,8 @@
 package com.yongche.cache;
 
 
+import com.yongche.config.bean.SourcePropertiesConfig;
+
 import java.util.ArrayList;
 
 /**
@@ -13,4 +15,13 @@ import java.util.ArrayList;
 
 public class Test {
 
+
+    public static void main(String[] args) {
+
+
+        System.out.println(Integer.MAX_VALUE);
+        System.out.println(Long.MAX_VALUE);
+        System.out.println("丢失精度");
+
+    }
 }

@@ -1,5 +1,6 @@
 package com.yongche.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.yongche.psf.PSFClient;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,27 +31,57 @@ public class PsfDispatchService {
 
     public JSONObject getAcceptNumByDriverId(long driverId) {
         PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
-        Map<String,Object> param = Maps.newHashMap();
-        param.put("driver_id",driverId);
+        Map<String, Object> param = Maps.newHashMap();
+        param.put("driver_id", driverId);
         request.data = "";
-        request.service_uri = "dispatch/getDriverAcceptNum?"+ RequestUtil.toQueryString(param);
+        request.service_uri = "dispatch/getDriverAcceptNum?" + RequestUtil.toQueryString(param);
         String response = null;
         try {
-            response = PSFManager.getManager().call(SERVICE_ID,request);
+            response = PSFManager.getManager().call(SERVICE_ID, request);
         } catch (Throwable e) {
-            logger.error("get order field faild from psf order center. driverId:{},e:{}", driverId,e);
+            logger.error("get order field faild from psf order center. driverId:{},e:{}", driverId, e);
         }
-        if(StringUtils.isBlank(response)){
+        if (StringUtils.isBlank(response)) {
             logger.error("get order field result is null from psf order center. driverId:{}", driverId);
             return null;
         }
         JSONObject resultJson = JSONObject.parseObject(response);
-        if(resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE){
-            logger.error("get order field faild from order center. driverId:{} result:{}",driverId,resultJson);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("get order field faild from order center. driverId:{} result:{}", driverId, resultJson);
             return null;
-        }else{
+        } else {
             JSONObject result = resultJson.getJSONObject("ret");
             return result;
         }
     }
+
+    public JSONObject createOrder(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+        Map<String, Object> param = Maps.newHashMap();
+        request.data = "";
+        request.service_uri = "State/createOrder?"+ RequestUtil.toQueryString(map);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("order", request);
+        } catch (Throwable e) {
+            logger.error("get order field faild from psf order center. driverId:{},e:{}", 1, e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("get order field result is null from psf order center. driverId:{}", 1);
+            return null;
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("get order field faild from order center. driverId:{} result:{}", 1, resultJson);
+            return null;
+        } else {
+            JSONObject result = resultJson.getJSONObject("ret");
+            return result;
+        }
+    }
+
+    public static void main(String[] args) {
+
+    }
+
 }
