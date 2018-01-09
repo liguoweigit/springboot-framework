@@ -75,7 +75,7 @@ public class PsfDispatchService {
             logger.error("get order field faild from order center. driverId:{} result:{}", 1, resultJson);
             return null;
         } else {
-            JSONObject result = resultJson.getJSONObject("ret");
+            JSONObject result = resultJson.getJSONObject("result");
             return result;
         }
     }
