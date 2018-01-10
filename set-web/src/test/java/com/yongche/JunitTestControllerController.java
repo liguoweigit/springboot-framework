@@ -8,19 +8,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
+ * test
  * by yongche.com
  *
  * @author mma
- * @since 2018-01-10 上午10:13
+ * @since 2017-05-10 上午10:14
  */
 
-public class TestService extends BaseTestService{
+public class JunitTestControllerController extends JunitBaseTestController {
 
-    static final Logger logger = LoggerFactory.getLogger(TestService.class);
+    static final Logger logger = LoggerFactory.getLogger(JunitTestControllerController.class);
 
 
     @Autowired
@@ -30,7 +30,7 @@ public class TestService extends BaseTestService{
     public void test(){
         Map<String, Object> map = new HashMap<>();
         map.put("user_id", 8060);
-        /*map.put("corporate_id", 0);
+        map.put("corporate_id", 0);
         map.put("passenger_phone", 123456789);
         map.put("passneger_name", "张三");
         map.put("city", "bj");
@@ -66,7 +66,7 @@ public class TestService extends BaseTestService{
         map.put("ip","10.1.7 .202");
         map.put("order_port", 60428);
         map.put("dispatch_type", 2);
-        map.put("time_length", 1800);*/
+        map.put("time_length", 1800);
         //String arg = JSON.toJSONString(map);
         //System.out.println(arg);
         Object obj = psfDispatchService.createOrder(map);

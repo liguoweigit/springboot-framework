@@ -11,9 +11,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 /**
  * Created by mma on 17/2/13.
  */
-public class TestController extends BaseTest{
+public class MockTestControllerMock extends MockBaseTest {
 
-    public static final Logger logger = LoggerFactory.getLogger(TestController.class);
+    public static final Logger logger = LoggerFactory.getLogger(MockTestControllerMock.class);
 
 
     /**

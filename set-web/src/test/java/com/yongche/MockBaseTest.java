@@ -6,8 +6,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,10 +23,10 @@ import java.net.URL;
 /**
  * Created by yangnan on 16/10/27.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {ServiceConfiguration.class})
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:application.yml" })
-public class BaseTest {
+public class MockBaseTest {
 
     private static String env = "dev";
 

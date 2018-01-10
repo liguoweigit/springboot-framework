@@ -25,7 +25,7 @@ import java.net.URL;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext
-public class BaseServiceTest {
+public class JunitBaseTestController {
 
     private static String env = "test";
 
