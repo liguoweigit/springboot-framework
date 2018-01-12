@@ -1,6 +1,7 @@
 package com.yongche;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.yongche.service.PsfDispatchService;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class JunitTestControllerController extends JunitBaseTestController {
         map.put("time_span", 0);
         map.put("has_custom_decision", 1);
         map.put("is_need_manual_dispatch", 0);
-        map.put("is_auto_dispatch", 1);
+        map.put("is_auto_dispatch", 0);
         map.put("estimate_price", 40);
         map.put("device_id", 0);
         map.put("corporate_dept_id", 0);
@@ -71,5 +72,41 @@ public class JunitTestControllerController extends JunitBaseTestController {
         //System.out.println(arg);
         Object obj = psfDispatchService.createOrder(map);
         System.out.println(JSON.toJSONString(obj));
+
+
+        long orderId = JSONObject.parseObject(JSON.toJSONString(obj)).getLong("service_order_id");
+        String[] fileds = new String[]{
+                "service_order_id",
+                "estimate_snap",
+                "estimate_price",
+                "create_time",
+                "flag",
+                "source",
+                "city",
+                "product_type_id",
+                "fixed_product_id",
+                "expect_start_time",
+                "time_length",
+                "car_type_ids",
+                "expect_end_latitude",
+                "expect_end_longitude",
+                "expect_start_latitude",
+                "expect_start_longitude",
+                "user_id",
+                "passenger_name",
+                "corporate_id",
+                "start_position",
+                "start_address",
+                "end_position",
+                "end_address",
+                "app_version",
+                "app_msg",
+                "flight_number"
+        };
+
+
+        JSONObject orderInfoJSON = psfDispatchService.getFromPsfOrderCenter(orderId,fileds);
+        System.out.println(JSONObject.toJSONString(orderInfoJSON));
+
     }
 }

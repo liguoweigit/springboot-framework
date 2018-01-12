@@ -8,6 +8,7 @@ import com.yongche.util.HttpConstant;
 import com.yongche.util.PSFManager;
 import com.yongche.util.RequestUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Consts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -80,8 +81,48 @@ public class PsfDispatchService {
         }
     }
 
-    public static void main(String[] args) {
-
+    /**
+     * 获取订单信息
+     * @param orderId
+     * @param fields
+     * @return
+     */
+    public static JSONObject getFromPsfOrderCenter(long orderId,String[] fields) {
+        String fieldStr = null;
+        if(fields != null && fields.length > 0){
+            fieldStr = StringUtils.join(fields,",");
+        }
+        Map<String,Object> paraMap = Maps.newHashMap();
+        paraMap.put("service_order_id",orderId);
+        if(StringUtils.isNotBlank(fieldStr)) {
+            paraMap.put("fields", fieldStr);
+        }
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+        request.data = "";
+        request.service_uri = "order/getFieldsByOrderId?"+RequestUtil.toQueryString(paraMap);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("order",request);
+        } catch (Throwable e) {
+            logger.error("get order field faild from psf order center. order id:{},e:{}", orderId,e);
+        }
+        if(StringUtils.isBlank(response)){
+            logger.error("get order field result is null from psf order center. order id:{}", orderId);
+            return null;
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if(resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE){
+            logger.error("get order field faild from order center. order id:{} result:{}",orderId,resultJson);
+            return null;
+        }else{
+            logger.info("get order field success from order center.orderId:{} | response:{}",orderId,response);
+            JSONObject result = resultJson.getJSONObject("result");
+            return result;
+        }
     }
+
+//    public static void main(String[] args) {
+//
+//    }
 
 }
