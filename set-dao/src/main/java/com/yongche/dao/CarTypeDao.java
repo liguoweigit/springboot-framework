@@ -11,7 +11,7 @@ import java.util.Set;
  * 车型数据表
  *
  */
-@DB(name = "xxx",table = "car_type")
+@DB(table = "car_type")
 public interface CarTypeDao {
 
     @SQL("select * from #table where car_type_id in (:1)")

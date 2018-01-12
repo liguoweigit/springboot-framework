@@ -5,12 +5,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.yongche.cache.CacheManager;
 import com.yongche.dao.CarTypeDao;
+import com.yongche.dao.DispatchDao;
 import com.yongche.enumdata.CacheKeyEnum;
 import com.yongche.factory.MangoFactoryBean;
+import com.yongche.pojo.Car;
 import com.yongche.service.PsfDispatchService;
 import com.yongche.service.TestService;
 import com.yongche.util.SpringUtil;
 import jmind.core.redis.Redis;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +40,8 @@ import java.util.Objects;
 @RestController
 public class HelloController {
 
+    private static final Logger logger = LoggerFactory.getLogger(HelloController.class);
+
     @Autowired
     private Environment environment;
 
@@ -43,6 +50,9 @@ public class HelloController {
 
     @Autowired
     private PsfDispatchService psfDispatchService;
+
+    @Autowired
+    private TestService testService;
 
 
     @RequestMapping(value = "/hello/{arg}")
@@ -167,10 +177,33 @@ public class HelloController {
         map.put("time_length", 1800);
         //String arg = JSON.toJSONString(map);
         //System.out.println(arg);
-        Object obj = psfDispatchService.createOrder(map);
-        resultMap.put("result",obj);
+        JSONObject jsonObject = psfDispatchService.createOrder(map);
+        if(null != jsonObject){
+            String orderId = jsonObject.getString("service_order_id");
+            if(StringUtils.isNotBlank(orderId)){
+                logger.info("create order succ. orderId:{}",orderId);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                List<Car> carList = testService.getSelectedCars(Long.parseLong(orderId),false,Car.class);
+                resultMap.put("orderId",orderId);
+                resultMap.put("carList",carList);
+            }
+        }else{
+            resultMap.put("error","创建订单失败");
+        }
+        //resultMap.put("result",obj);
         return resultMap;
 
+    }
+
+
+    @RequestMapping(value = "selected_cars/{orderId}")
+    public Object getSelectedCars(@PathVariable long orderId){
+        List<Car> carList = testService.getSelectedCars(orderId,false,Car.class);
+        return carList;
     }
 
 }

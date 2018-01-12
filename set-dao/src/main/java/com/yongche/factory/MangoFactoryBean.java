@@ -70,7 +70,7 @@ public class MangoFactoryBean extends AbstractMangoFactoryBean {
         List<DataSourceInstance> slaves = database.getSlaves();
         DataSource masterDataSource = buildDataSource(master);
         if (CollectionUtils.isEmpty(slaves)) {
-            return new SimpleDataSourceFactory(masterDataSource);
+            return new SimpleDataSourceFactory(database.getName(),masterDataSource);
         } else {
             List<DataSource> slaveDataSources = Lists.newArrayList();
             for (DataSourceInstance slave : slaves) {
