@@ -46,7 +46,7 @@ public class JunitTestControllerController extends JunitBaseTestController {
         map.put("expect_start_longitude", 116.31401996887);
         map.put("expect_end_latitude", 40.007924675665);
         map.put("expect_end_longitude", 116.38557987398);
-        map.put("start_position", "中国技术交易大厦");
+        map.put("start_position", "");
         map.put("start_address", "中国技术交易大厦");
         map.put("end_position", "南沟泥河");
         map.put("end_address", "南沟泥河");
@@ -101,7 +101,14 @@ public class JunitTestControllerController extends JunitBaseTestController {
                 "end_address",
                 "app_version",
                 "app_msg",
-                "flight_number"
+                "flight_number",
+                "corporate_dept_id",
+                "car_type",
+                "dispatch_driver_ids",
+                "pa_bargain_amount",
+                "bidding_id",
+                "add_price_amount",
+                "distance",
         };
 
 

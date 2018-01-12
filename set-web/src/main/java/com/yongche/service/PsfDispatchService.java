@@ -58,7 +58,7 @@ public class PsfDispatchService {
 
     public JSONObject createOrder(Map<String,Object> map){
         PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
-        Map<String, Object> param = Maps.newHashMap();
+
         request.data = "";
         request.service_uri = "State/createOrder?"+ RequestUtil.toQueryString(map);
         String response = null;

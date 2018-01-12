@@ -33,11 +33,13 @@ public class TestService {
 
 
     public List<Car> getSelectedCars(long orderId,boolean old,Class c){
+        //通过orderId，在派单表拿到相关信息
         Dispatch dispatch = dispatchDao.selectOneById(orderId);
         if(null == dispatch){
             return Collections.emptyList();
         }
         int round = dispatch.getRound();
+        //根据派单表中的轮次，拿到redis中的选车列表
         List<Car> carList = orderCacheService.getCarListFromRedis(orderId,round,old,c);
         if(CollectionUtils.isEmpty(carList)){
             return Collections.emptyList();
