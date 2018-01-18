@@ -306,6 +306,22 @@ public class HelloController {
         return carList;
     }
 
+
+    @RequestMapping(value = "Dispatch/driverResponse/{orderId}")
+    public int getResponsedrivernum(@PathVariable long orderId){
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Integer count = testService.getResponsedrivernum(orderId);
+        return count;
+
+    }
+
+
+}
     /**取消订单
      *
      * @param orderId
