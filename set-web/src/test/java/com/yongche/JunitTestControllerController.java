@@ -2,7 +2,10 @@ package com.yongche;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.yongche.controller.HelloController;
+import com.yongche.pojo.Car;
 import com.yongche.service.PsfDispatchService;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +30,16 @@ public class JunitTestControllerController extends JunitBaseTestController {
     @Autowired
     private PsfDispatchService psfDispatchService;
 
+
     @Test
-    public void test(){
+    public void test() {
         Map<String, Object> map = new HashMap<>();
-        map.put("user_id", 8060);
+        map.put("user_id", 3046655);
         map.put("corporate_id", 0);
         map.put("passenger_phone", 123456789);
         map.put("passneger_name", "张三");
         map.put("city", "bj");
-        map.put("product_type_id", 8);
+        map.put("product_type_id", 17);
         map.put("fixed_product_id", 467);
         map.put("car_type_id", 37);
         map.put("car_type_ids", "37,2");
@@ -64,16 +68,17 @@ public class JunitTestControllerController extends JunitBaseTestController {
         map.put("flag", 2);
         map.put("create_order_longitude", 116.314045);
         map.put("create_order_latitude", 39.990013);
-        map.put("ip","10.1.7 .202");
+        map.put("ip", "10.1.7 .202");
         map.put("order_port", 60428);
         map.put("dispatch_type", 2);
         map.put("time_length", 1800);
+        map.put("app_msg", "");
         //String arg = JSON.toJSONString(map);
         //System.out.println(arg);
         Object obj = psfDispatchService.createOrder(map);
         System.out.println(JSON.toJSONString(obj));
 
-
+//       Ordercenter获取orderInfo
         long orderId = JSONObject.parseObject(JSON.toJSONString(obj)).getLong("service_order_id");
         String[] fileds = new String[]{
                 "service_order_id",
@@ -109,11 +114,56 @@ public class JunitTestControllerController extends JunitBaseTestController {
                 "bidding_id",
                 "add_price_amount",
                 "distance",
+                "extension",
         };
 
 
-        JSONObject orderInfoJSON = psfDispatchService.getFromPsfOrderCenter(orderId,fileds);
+        JSONObject orderInfoJSON = psfDispatchService.getFromPsfOrderCenter(orderId, fileds);
         System.out.println(JSONObject.toJSONString(orderInfoJSON));
+
+
+        JSONObject startDispatchStat = psfDispatchService.startDispatch(orderInfoJSON);
+        System.out.println("startDispatch--->" + startDispatchStat.toJSONString());
+
+    }
+
+    @Test
+    public void test2() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("order_id", 6511856917944463356L);
+        map.put("return_min", 1);
+        map.put("reason_id", 1);
+        map.put("extension", "{\"other_reason\":\"\"}");
+        map.put("user_confirmed", "0");
+
+
+        Object obj = psfDispatchService.cancelOrder(map);
+        System.out.println(JSON.toJSONString(obj));
+
+    }
+
+    @Test
+    public void test3() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("car_id", 50072207);
+        map.put("order_id", 6512254928268816792L);
+        map.put("account_id", 100001140);
+        map.put("latitude", 39.910607);
+        map.put("longitude", 116.440167);
+        map.put("in_coord_type", "baidu");
+        map.put("distance", 3.5);
+        map.put("drive_time", 600);
+        map.put("driver_add_price", 0);
+        map.put("batch", 1);
+        map.put("round", 1);
+        map.put("is_auto", 0);
+        map.put("driver_id", 1140);
+        map.put("bargain_amount", 0);
+        map.put("response_driver_ip", "10.1.16.22");
+
+
+        Object obj = psfDispatchService.driverResponse(map);
+        System.out.println(JSON.toJSONString(obj));
 
     }
 }

@@ -63,7 +63,7 @@ public class PsfDispatchService {
         request.service_uri = "State/createOrder?"+ RequestUtil.toQueryString(map);
         String response = null;
         try {
-            response = PSFManager.getManager().call("order", request);
+            response = PSFManager.getManager().call("oc", request);
         } catch (Throwable e) {
             logger.error("get order field faild from psf order center. driverId:{},e:{}", 1, e);
         }
@@ -87,7 +87,7 @@ public class PsfDispatchService {
      * @param fields
      * @return
      */
-    public static JSONObject getFromPsfOrderCenter(long orderId,String[] fields) {
+    public JSONObject getFromPsfOrderCenter(long orderId,String[] fields) {
         String fieldStr = null;
         if(fields != null && fields.length > 0){
             fieldStr = StringUtils.join(fields,",");
@@ -121,8 +121,94 @@ public class PsfDispatchService {
         }
     }
 
-//    public static void main(String[] args) {
-//
-//    }
+
+    /**
+     * 调取dispatch派单
+     */
+
+    public JSONObject startDispatch(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+
+        request.data = map.toString();
+        request.service_uri = "dispatch/startDispatch?service_order_id="+map.get("service_order_id");
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("dispatch", request);
+        } catch (Throwable e) {
+            logger.error("startDispatch faild . orderId:{},e:{}", map.get("service_order_id"), e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("startDispatch result is null . orderId:{}",map.get("service_order_id"));
+            return null;
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("startDispatch faild . orderId:{} result:{}", map.get("service_order_id"), resultJson);
+            return null;
+        } else {
+            JSONObject result = resultJson.getJSONObject("result");
+            return result;
+        }
+    }
+
+
+    /**
+     * 根据orderId取消订单
+     */
+
+    public JSONObject cancelOrder(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+
+        request.data = "";
+        request.service_uri = "State/cancel?"+ RequestUtil.toQueryString(map);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("order", request);
+        } catch (Throwable e) {
+            logger.error("cancel order faild . orderId:{},e:{}", map.get("service_order_id"), e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("cancel order result is null . orderId:{}", map.get("service_order_id"));
+            return null;
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("cancel order faild . orderId:{} result:{}", map.get("service_order_id"), resultJson);
+            return null;
+        } else {
+            JSONObject result = resultJson.getJSONObject("result");
+            return result;
+        }
+    }
+
+    /**
+     * 司机接单
+     */
+
+    public JSONObject driverResponse(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+
+        request.data = "";
+        request.service_uri = "dispatch/driverResponse?"+ RequestUtil.toQueryString(map);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("dispatch", request);
+        } catch (Throwable e) {
+            logger.error("driverResponse faild . orderId:{},e:{}", map.get("order_id"), e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("driverResponse result is null . orderId:{}", map.get("order_id"));
+            return null;
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("driverResponse faild . orderId:{} result:{}", map.get("service_order_id"), resultJson);
+            return null;
+        } else {
+            JSONObject result = resultJson.getJSONObject("result");
+            return result;
+        }
+    }
+
 
 }
