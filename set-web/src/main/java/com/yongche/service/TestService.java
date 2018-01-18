@@ -47,4 +47,15 @@ public class TestService {
             return carList;
         }
     }
+
+
+    public Integer getResponsedrivernum(long orderId){
+
+      //  Dispatch dispatch = dispatchDao.selectOneById(orderId);
+      //  int round = dispatch.getRound();
+
+        Integer number = orderCacheService.getResponseDriverNum(orderId);
+        return number;
+    }
+
 }

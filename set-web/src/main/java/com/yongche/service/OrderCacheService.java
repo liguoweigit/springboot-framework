@@ -64,14 +64,20 @@ public class OrderCacheService {
         try {
             String key = DataUtil.join(GlobalConstants.COLON, CacheKeys.RESPONSE_DRIVER_NUM_KEY, serviceOrderId);
             String responseDriverStr = CacheManager.getInstance().getRedis().get(key);
-            if(StringUtils.isNotBlank(responseDriverStr)){
-                responseDriverNum = JSONObject.parseObject(responseDriverStr).getInteger("order_accept_num");
-            }
+
+             responseDriverNum = Integer.parseInt(responseDriverStr);
+            System.out.println(responseDriverStr);
+
+         //   if(StringUtils.isNotBlank(responseDriverStr)){
+         //       responseDriverNum = JSONObject.parseObject(responseDriverStr).getInteger("order_accept_num");
+         //   }
         }catch (Exception e){
             e.printStackTrace();
             logger.warn("getResponseDriverNum error,serviceOrderId:{},errorMessage:{}",serviceOrderId,e.getMessage());
         }
         logger.info("getResponseDriverNum success,serviceOrderId:{},responseDriverNum:{}",serviceOrderId,responseDriverNum);
+
+
         return responseDriverNum;
     }
 }

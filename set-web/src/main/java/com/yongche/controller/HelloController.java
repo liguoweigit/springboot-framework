@@ -137,7 +137,7 @@ public class HelloController {
     public Object createOrder(){
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
-        map.put("user_id", 8060);
+        map.put("user_id", 3043745);
         map.put("corporate_id", 0);
         map.put("passenger_phone", 123456789);
         map.put("passneger_name", "张三");
@@ -187,14 +187,14 @@ public class HelloController {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                List<Car> carList = testService.getSelectedCars(Long.parseLong(orderId),false,Car.class);
+                List<Car> carList = testService.getSelectedCars(Long.parseLong(orderId),true,Car.class);
                 resultMap.put("orderId",orderId);
                 resultMap.put("carList",carList);
             }
         }else{
             resultMap.put("error","创建订单失败");
         }
-        //resultMap.put("result",obj);
+       // resultMap.put("result",obj);
         return resultMap;
 
     }
@@ -202,8 +202,23 @@ public class HelloController {
 
     @RequestMapping(value = "selected_cars/{orderId}")
     public Object getSelectedCars(@PathVariable long orderId){
-        List<Car> carList = testService.getSelectedCars(orderId,false,Car.class);
+        List<Car> carList = testService.getSelectedCars(orderId,true,Car.class);
         return carList;
     }
+
+
+    @RequestMapping(value = "Dispatch/driverResponse/{orderId}")
+    public int getResponsedrivernum(@PathVariable long orderId){
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Integer count = testService.getResponsedrivernum(orderId);
+        return count;
+
+    }
+
 
 }
