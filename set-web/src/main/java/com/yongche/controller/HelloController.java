@@ -1,6 +1,7 @@
 package com.yongche.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.yongche.cache.CacheManager;
@@ -321,7 +322,7 @@ public class HelloController {
     }
 
 
-}
+
     /**取消订单
      *
      * @param orderId
@@ -371,6 +372,34 @@ public class HelloController {
         resultMap.put("response",JSON.toJSONString(jsonObject));
         return resultMap;
     }
+
+
+
+
+    /**获取派单明细
+     *
+     * @param order_id，round
+     * @return
+     */
+    // http://localhost:8080/createOrder/1/2
+    // dispatch/getDispatchDetail/{order_id}/{round}
+
+    @RequestMapping(value = "dispatch/getDispatchDetail/{order_id}/{round}")
+    public Object getDispatchDetail(@PathVariable long order_id,@PathVariable int round) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("order_id", order_id);
+        map.put("round", round);
+
+        JSONObject jsonObject = psfDispatchService.getDispatchDetail(map);
+        System.out.println(JSON.toJSONString(jsonObject));
+        resultMap.put("response",JSON.toJSONString(jsonObject));
+        return resultMap;
+    }
+
+
+
+
 
 
 }

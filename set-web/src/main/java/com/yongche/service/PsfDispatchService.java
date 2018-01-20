@@ -1,8 +1,10 @@
 package com.yongche.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.yongche.pojo.Car;
 import com.yongche.psf.PSFClient;
 import com.yongche.util.HttpConstant;
 import com.yongche.util.PSFManager;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -208,6 +211,37 @@ public class PsfDispatchService {
             JSONObject result = resultJson.getJSONObject("result");
             return result;
         }
+    }
+
+
+    //获取派单明细
+
+    public JSONObject getDispatchDetail(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+
+        request.data = "";
+        request.service_uri = "dispatch/getDispatchDetail?"+ RequestUtil.toQueryString(map);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("dispatch", request);
+        } catch (Throwable e) {
+            logger.error("getDispatchDetail faild . orderId:{},e:{}", map.get("order_id"), e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("getDispatchDetail result is null . orderId:{}", map.get("order_id"));
+            return null;
+        }
+
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("getDispatchDetail faild . orderId:{} result:{}", map.get("service_order_id"), resultJson);
+            return null;
+        } else {
+
+           return resultJson;
+
+        }
+
     }
 
 
