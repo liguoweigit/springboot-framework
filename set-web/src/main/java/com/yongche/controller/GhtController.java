@@ -1,18 +1,12 @@
 package com.yongche.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.yongche.cache.CacheManager;
-import com.yongche.cache.Test;
 import com.yongche.dao.CarTypeDao;
-import com.yongche.dao.DispatchDao;
 import com.yongche.enumdata.CacheKeyEnum;
-import com.yongche.factory.MangoFactoryBean;
 import com.yongche.pojo.Car;
-import com.yongche.psf.service.ServiceMapping;
-import com.yongche.psf.service.ServiceRequest;
 import com.yongche.service.PsfDispatchService;
 import com.yongche.service.TestService;
 import com.yongche.util.SpringUtil;
@@ -27,8 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.Instant;
 import java.util.*;
 
@@ -40,9 +32,9 @@ import java.util.*;
  * @since 2017-11-25 下午10:13
  */
 @RestController
-public class HelloController {
+public class GhtController {
 
-    private static final Logger logger = LoggerFactory.getLogger(HelloController.class);
+    private static final Logger logger = LoggerFactory.getLogger(GhtController.class);
 
     private static final String[] fileds = new String[]{
             "service_order_id",
@@ -419,40 +411,6 @@ public class HelloController {
         resultMap.put("response",JSON.toJSONString(jsonObject));
         return resultMap;
     }
-
-
-
-
-
-
-    //获取司机接单列表
-
-
-    // http://localhost:8080/createOrder/1/2
-    // http://localhost:8080/dispatch/getAcceptCars/{order_id}
-
-    @RequestMapping(value = "dispatch/getAcceptCars/{order_id}")
-    public Object getAcceptCars(@PathVariable long order_id) {
-        Map<String, Object> resultMap = new HashMap<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("order_id", order_id);
-        map.put("out_coord_type", "mars");
-        map.put("filter_driver_ids", "1140");
-        map.put("count", 5);
-
-        JSONObject jsonObject = psfDispatchService.getAcceptCars(map);
-        System.out.println(JSON.toJSONString(jsonObject));
-        resultMap.put("response",JSON.toJSONString(jsonObject));
-        return resultMap;
-    }
-
-
-
-
-
-
-
-
 
 }
 
