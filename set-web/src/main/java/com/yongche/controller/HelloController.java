@@ -471,6 +471,28 @@ public class HelloController {
 
 
 
+    //获取车牌是否限行
+
+
+    // http://localhost:8080/createOrder/1/2
+    // http://localhost:8080/dispatch/isVehicleNumberProhibit/{carNumber}
+    // http://localhost:8080/dispatch/isVehicleNumberProhibit/京B0001U
+
+    @RequestMapping(value = "dispatch/isVehicleNumberProhibit/{carNumber}")
+    public Object isVehicleNumberProhibit(@PathVariable String carNumber) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("city", "bj");
+        map.put("carNumber", carNumber);
+
+
+        JSONObject jsonObject = psfDispatchService.isVehicleNumberProhibit(map);
+        System.out.println(JSON.toJSONString(jsonObject));
+        resultMap.put("response",JSON.toJSONString(jsonObject));
+        return resultMap;
+    }
+
+
 
 
 }

@@ -339,7 +339,32 @@ public class PsfDispatchService {
 
 
 
+    //获取车牌是否限行
 
+    public JSONObject isVehicleNumberProhibit(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+
+        request.data = "";
+        request.service_uri = "dispatch/isVehicleNumberProhibit?"+ RequestUtil.toQueryString(map);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("dispatch", request);
+        } catch (Throwable e) {
+            logger.error("isVehicleNumberProhibit faild . orderId:{},e:{}", map.get("order_id"), e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("isVehicleNumberProhibit result is null . orderId:{}", map.get("order_id"));
+            return null;
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("isVehicleNumberProhibit faild . orderId:{} result:{}", map.get("service_order_id"), resultJson);
+            return null;
+        } else {
+
+            return resultJson;
+        }
+    }
 
 
 
