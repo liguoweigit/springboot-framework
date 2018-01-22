@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yongche.controller.HelloController;
 import com.yongche.pojo.Car;
+import com.yongche.service.LBSService;
 import com.yongche.service.PsfDispatchService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -30,6 +31,8 @@ public class JunitTestControllerController extends JunitBaseTestController {
     @Autowired
     private PsfDispatchService psfDispatchService;
 
+    @Autowired
+    private LBSService lbsService;
 
     @Test
     public void test() {
@@ -160,10 +163,12 @@ public class JunitTestControllerController extends JunitBaseTestController {
         map.put("driver_id", 1140);
         map.put("bargain_amount", 0);
         map.put("response_driver_ip", "10.1.16.22");
-
-
         Object obj = psfDispatchService.driverResponse(map);
         System.out.println(JSON.toJSONString(obj));
+    }
 
+    @Test
+    public void testLBS(){
+        lbsService.changeWorkStatus(1140,1);
     }
 }

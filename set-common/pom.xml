@@ -61,5 +61,9 @@
             <groupId>com.yongche.psf</groupId>
             <artifactId>psf-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
     </dependencies>
 </project>
