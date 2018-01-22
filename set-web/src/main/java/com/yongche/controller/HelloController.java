@@ -402,5 +402,25 @@ public class HelloController {
 
 
 
+
+    //获取司机日程
+
+
+    // http://localhost:8080/createOrder/1/2
+    // http://localhost:8080/dispatch/getDriverCalendar/{driver_id}
+
+    @RequestMapping(value = "dispatch/getDriverCalendar/{driver_id}")
+    public Object getDriverCalendar(@PathVariable int driver_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("driver_id", driver_id);
+
+
+        JSONObject jsonObject = psfDispatchService.getDriverCalendar(map);
+        System.out.println(JSON.toJSONString(jsonObject));
+        resultMap.put("response",JSON.toJSONString(jsonObject));
+        return resultMap;
+    }
+
 }
 
