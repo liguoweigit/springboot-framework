@@ -369,4 +369,41 @@ public class PsfDispatchService {
 
 
 
+
+    //获取司机改派状态
+
+
+
+    public JSONObject getChangeDriverStatus(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+
+        request.data = "";
+        request.service_uri = "dispatch/getChangeDriverStatus?"+ RequestUtil.toQueryString(map);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("dispatch", request);
+        } catch (Throwable e) {
+            logger.error("getChangeDriverStatus faild . orderId:{},e:{}", map.get("order_id"), e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("getChangeDriverStatus result is null . orderId:{}", map.get("order_id"));
+            return null;
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("getChangeDriverStatus faild . orderId:{} result:{}", map.get("service_order_id"), resultJson);
+            return null;
+        } else {
+
+
+            JSONObject result = resultJson.getJSONObject("result");
+            return result;
+            //return resultJson;
+        }
+    }
+
+
+
+
+
 }

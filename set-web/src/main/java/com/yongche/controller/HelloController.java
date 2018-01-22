@@ -169,9 +169,13 @@ public class HelloController {
         Redis redis = CacheManager.getInstance().getRedis();
         String biddingKey = CacheKeyEnum.BIDDING_INFO_KEY.toKey(orderId);
         String biddingInfoValue = CacheManager.getInstance().getRedis().get(biddingKey);
+        long biddingId = JSONObject.parseObject(biddingInfoValue).getLong("bidding_id");
+        System.out.println(biddingId);
         map.put(String.valueOf(orderId), biddingInfoValue);
         return map;
     }
+
+
 
     @RequestMapping(value = "createOrder/{autoDispatch}/{productTypeId}")
     public Object createOrder(@PathVariable int autoDispatch, @PathVariable int productTypeId) {
@@ -492,6 +496,37 @@ public class HelloController {
         return resultMap;
     }
 
+
+
+    //获取司机改派状态
+
+
+    // http://localhost:8080/createOrder/1/2
+    // http://localhost:8080/dispatch/getChangeDriverStatus/{service_order_id}/{driver_id}
+    //http://localhost:8080/dispatch/getChangeDriverStatus/6513801631894107008/690
+
+
+
+
+    @RequestMapping(value = "dispatch/getChangeDriverStatus/{service_order_id}/{driver_id}")
+    public Object getChangeDriverStatus(@PathVariable long service_order_id,@PathVariable long driver_id) {
+
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        String biddingKey = CacheKeyEnum.BIDDING_INFO_KEY.toKey(service_order_id);
+        String biddingInfoValue = CacheManager.getInstance().getRedis().get(biddingKey);
+        long bidding_id = JSONObject.parseObject(biddingInfoValue).getLong("bidding_id");
+
+        map.put("service_order_id", service_order_id);
+        map.put("bidding_id", bidding_id);
+        map.put("driver_id", driver_id);
+
+
+        JSONObject jsonObject = psfDispatchService.getChangeDriverStatus(map);
+        System.out.println(JSON.toJSONString(jsonObject));
+        resultMap.put("response",JSON.toJSONString(jsonObject));
+        return resultMap;
+    }
 
 
 
