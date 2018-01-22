@@ -9,14 +9,16 @@ import com.yongche.util.RequestUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+@Service
 public class GhtPsfService {
 
     private final static String SERVICE_ID = "dispatch";
 
-    private static final Logger logger = LoggerFactory.getLogger(PsfDispatchService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GhtPsfService.class);
 
     public JSONObject getAcceptNumByDriverId(long driverId) {
         PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
@@ -229,6 +231,60 @@ public class GhtPsfService {
 
     }
 
+
+    public JSONObject getAcceptCars(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+
+        request.data = "";
+        request.service_uri = "dispatch/getAcceptCars?"+ RequestUtil.toQueryString(map);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("dispatch", request);
+        } catch (Throwable e) {
+            logger.error("getAcceptCars faild . orderId:{},e:{}", map.get("order_id"), e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("getAcceptCars result is null . orderId:{}", map.get("order_id"));
+            return null;
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("getAcceptCars faild . orderId:{} result:{}", map.get("service_order_id"), resultJson);
+            return null;
+        } else {
+            return resultJson;
+
+        }
+
+    }
+
+    public JSONObject userDecision(Map<String,Object> map){
+        PSFClient.PSFRPCRequestData request = new PSFClient.PSFRPCRequestData();
+
+        request.data = "";
+        request.service_uri = "dispatch/userDecision?"+ RequestUtil.toQueryString(map);
+        String response = null;
+        try {
+            response = PSFManager.getManager().call("dispatch", request);
+        } catch (Throwable e) {
+            logger.error("userDecision faild . orderId:{},e:{}", map.get("order_id"), e);
+        }
+        if (StringUtils.isBlank(response)) {
+            logger.error("userDecision result is null . orderId:{}", map.get("order_id"));
+            return null;
+        }else{
+            logger.info("userDecision result:{} . orderId:{}", response,map.get("order_id"));
+        }
+        JSONObject resultJson = JSONObject.parseObject(response);
+        if (resultJson.getIntValue("ret_code") != HttpConstant.HTTP_SUCCESS_CODE) {
+            logger.error("userDecision faild . orderId:{} result:{}", map.get("service_order_id"), resultJson);
+            return null;
+        } else {
+            return resultJson;
+
+        }
+
+    }
 
 
     //获取司机日程

@@ -1,15 +1,18 @@
 package com.yongche.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.yongche.cache.CacheManager;
 import com.yongche.dao.CarTypeDao;
 import com.yongche.enumdata.CacheKeyEnum;
 import com.yongche.pojo.Car;
-import com.yongche.service.PsfDispatchService;
+import com.yongche.service.GhtPsfService;
 import com.yongche.service.TestService;
 import com.yongche.util.SpringUtil;
+import com.yongche.webutil.GhtUtil;
+import com.yongche.webutil.UserDecisionVo;
 import jmind.core.redis.Redis;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +58,7 @@ public class GhtController {
             "expect_start_longitude",
             "user_id",
             "passenger_name",
+            "passenger_phone",
             "corporate_id",
             "start_position",
             "start_address",
@@ -77,16 +81,13 @@ public class GhtController {
     private Environment environment;
 
     @Autowired
-    private CarTypeDao carTypeDao;
-
-    @Autowired
-    private PsfDispatchService psfDispatchService;
+    private GhtPsfService ghtPsfService;
 
     @Autowired
     private TestService testService;
 
 
-    @RequestMapping(value = "/hello/{arg}")
+    @RequestMapping(value = "ght/hello/{arg}")
     public Object hello(@PathVariable String arg) {
         Objects.requireNonNull(arg, "arguments must be not null");
         Map<String, Object> map = new HashMap<String, Object>();
@@ -121,17 +122,17 @@ public class GhtController {
      * @param driverId
      * @return
      */
-    @RequestMapping(value = "accept/{driverId}")
+    @RequestMapping(value = "ght/accept/{driverId}")
     public Object getAccpetOrderNum(@PathVariable long driverId) {
         Map<String, Object> map = new HashMap<String, Object>();
-        JSONObject jsonObject = psfDispatchService.getAcceptNumByDriverId(driverId);
+        JSONObject jsonObject = ghtPsfService.getAcceptNumByDriverId(driverId);
         if (null != jsonObject) {
             map.put(String.valueOf(driverId), jsonObject);
         }
         return map;
     }
 
-    @RequestMapping(value = "schedule/get/{driverId}")
+    @RequestMapping(value = "ght/schedule/get/{driverId}")
     public Object getScheduleByDriverId(@PathVariable long driverId) {
         Map<String, Object> map = new HashMap<String, Object>();
         Redis redis = CacheManager.getInstance().getRedis();
@@ -140,7 +141,7 @@ public class GhtController {
         return map;
     }
 
-    @RequestMapping(value = "schedule/del/{driverId}")
+    @RequestMapping(value = "ght/schedule/del/{driverId}")
     public Object delScheduleByDriverId(@PathVariable long driverId) {
         Map<String, Object> map = new HashMap<String, Object>();
         Redis redis = CacheManager.getInstance().getRedis();
@@ -155,7 +156,7 @@ public class GhtController {
         return map;
     }
 
-    @RequestMapping(value = "bidding/{orderId}")
+    @RequestMapping(value = "ght/bidding/{orderId}")
     public Object biddingByOrder(@PathVariable long orderId) {
         Map<String, Object> map = new HashMap<String, Object>();
         Redis redis = CacheManager.getInstance().getRedis();
@@ -165,14 +166,14 @@ public class GhtController {
         return map;
     }
 
-    @RequestMapping(value = "createOrder/{autoDispatch}/{productTypeId}")
+    @RequestMapping(value = "ght/createOrder/{autoDispatch}/{productTypeId}")
     public Object createOrder(@PathVariable int autoDispatch, @PathVariable int productTypeId) {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
         map.put("user_id", 3046655);
         map.put("corporate_id", 0);
         map.put("passenger_phone", 123456789);
-        map.put("passneger_name", "小小石头");
+        map.put("passenger_name", "小小石头");
         map.put("city", "bj");
         map.put("product_type_id", productTypeId);
         map.put("fixed_product_id", 35);
@@ -181,12 +182,12 @@ public class GhtController {
         map.put("source", 11000001);
         map.put("expect_start_time", Instant.now().getEpochSecond());
         map.put("in_coord_type", "baidu");
-        map.put("expect_start_latitude", 39.812839399934);
-        map.put("expect_start_longitude", 116.49700986387);
+        map.put("expect_start_latitude", 39.9049593);
+        map.put("expect_start_longitude", 116.4316638);
         map.put("expect_end_latitude", 40.007924675665);
         map.put("expect_end_longitude", 116.38557987398);
-        map.put("start_position", "亦庄文化园地铁口");
-        map.put("start_address", "亦庄文化园地铁口");
+        map.put("start_position", "万豪中心A座");
+        map.put("start_address", "万豪中心A座");
         map.put("end_position", "南沟泥河");
         map.put("end_address", "南沟泥河");
         map.put("flight_number", 0);
@@ -200,7 +201,7 @@ public class GhtController {
         map.put("device_id", 0);
         map.put("corporate_dept_id", 0);
         map.put("estimate_info", "D123, T3700");
-        map.put("flag", 2);
+        map.put("flag", 281586647957506L);
         map.put("create_order_longitude", 116.314045);
         map.put("create_order_latitude", 39.990013);
         map.put("ip", "10.1.7 .202");
@@ -210,7 +211,7 @@ public class GhtController {
         map.put("app_msg", "");
 
         //1.创建订单
-        JSONObject jsonObject = psfDispatchService.createOrder(map);
+        JSONObject jsonObject = ghtPsfService.createOrder(map);
         long orderId = 0L;
         if (null != jsonObject) {
             String orderIdStr = jsonObject.getString("service_order_id");
@@ -221,17 +222,17 @@ public class GhtController {
                 resultMap.put("error", "createOrder not found orderId");
                 return resultMap;
             }
+            JSONObject orderFields = ghtPsfService.getFromPsfOrderCenter(orderId, fileds);
+            if (null == orderFields) {
+                resultMap.put("error", "getFromPsfOrderCenter failed. orderId:" + orderId);
+                return resultMap;
+            }
             List<Car> carList = null;
             //如果是自动派单，则直接去查看选车接口
             if (1 == autoDispatch) {
                 carList = getCarList(orderId, false);
             } else {
-                JSONObject orderFields = psfDispatchService.getFromPsfOrderCenter(orderId, fileds);
-                if (null == orderFields) {
-                    resultMap.put("error", "getFromPsfOrderCenter failed. orderId:" + orderId);
-                    return resultMap;
-                }
-                JSONObject dispatchResult = psfDispatchService.startDispatch(orderFields);
+                JSONObject dispatchResult = ghtPsfService.startDispatch(orderFields);
                 if (null != dispatchResult) {
                     carList = getCarList(orderId, false);
                 }
@@ -239,9 +240,48 @@ public class GhtController {
             }
             resultMap.put("createOrder", String.valueOf(orderId));
             if (CollectionUtils.isNotEmpty(carList)) {
-                resultMap.put("carListSize", carList.size());
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Optional<Car> responseCar = carList.stream().findFirst();
+                if(responseCar.isPresent()){
+                    Map<String,Object> driverResponseReqMap = GhtUtil.wrappedDriverResponse(
+                            responseCar.get(),orderId,1,1,orderFields.getLongValue("user_id"));
+                    JSONObject responseRet = ghtPsfService.driverResponse(driverResponseReqMap);
+                    resultMap.put("driverResponseResult", responseRet);
+                }
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Map<String, Object> acceptCarsReq = new HashMap<>();
+                acceptCarsReq.put("order_id", orderId);
+                acceptCarsReq.put("out_coord_type", "mars");
+                acceptCarsReq.put("filter_driver_ids","");
+                JSONObject acceptCars = ghtPsfService.getAcceptCars(acceptCarsReq);
+                resultMap.put("acceptCars", acceptCars);
+                if(null != acceptCars) {
+                    JSONArray acceptCarsArray = acceptCars.getJSONArray("car_list");
+                    if(CollectionUtils.isNotEmpty(acceptCarsArray)){
+                        UserDecisionVo userDecisionVo = new UserDecisionVo();
+                        userDecisionVo.setCorporate_id(orderFields.getLongValue("corporate_id"));
+                        userDecisionVo.setCoupon_member_id(0);
+                        userDecisionVo.setDriver_id(acceptCarsArray.getJSONObject(0).getLongValue("driver_id"));
+                        userDecisionVo.setOrder_id(orderId);
+                        userDecisionVo.setSms("passenger");
+                        userDecisionVo.setPassenger_name(orderFields.getString("passenger_name"));
+                        userDecisionVo.setPassenger_phone(orderFields.getString("passenger_phone"));
+                        Map<String,Object> userDecisionReqMap = GhtUtil.wrappedUserDecision(userDecisionVo);
+                        JSONObject decisionJson = ghtPsfService.userDecision(userDecisionReqMap);
+                        resultMap.put("decisionResult", decisionJson);
+                    }
+                }
             }
             resultMap.put("carList", carList);
+            resultMap.put("carListSize", carList.size());
         } else {
             resultMap.put("error", "创建订单失败");
         }
@@ -272,7 +312,7 @@ public class GhtController {
 //        mapRe.put("response_driver_ip", "10.1.16.22");
 //
 //
-//        Object obj = psfDispatchService.driverResponse(mapRe);
+//        Object obj = ghtPsfService.driverResponse(mapRe);
 
         return resultMap;
 
@@ -293,14 +333,14 @@ public class GhtController {
     }
 
 
-    @RequestMapping(value = "selected_cars/{orderId}")
+    @RequestMapping(value = "ght/selected_cars/{orderId}")
     public Object getSelectedCars(@PathVariable long orderId) {
         List<Car> carList = testService.getSelectedCars(orderId, false, Car.class);
         return carList;
     }
 
 
-    @RequestMapping(value = "Dispatch/driverResponse/{orderId}")
+    @RequestMapping(value = "ght/dispatch/driverResponse/{orderId}")
     public int getResponsedrivernum(@PathVariable long orderId){
 
         try {
@@ -328,7 +368,7 @@ public class GhtController {
 //        map.put("extension", "{\"other_reason\":\"\"}");
 //        map.put("user_confirmed", "0");
 //
-//        JSONObject jsonObject = psfDispatchService.cancelOrder(map);
+//        JSONObject jsonObject = ghtPsfService.cancelOrder(map);
 //        System.out.println(JSON.toJSONString(jsonObject));
 //    }
 
@@ -337,7 +377,7 @@ public class GhtController {
       * @param orderId
      * @return
      */
-    @RequestMapping(value = "driverResponses/{orderId}")
+    @RequestMapping(value = "ght/driverResponses/{orderId}")
         public Object driverResponses(@PathVariable long orderId) {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
@@ -357,7 +397,7 @@ public class GhtController {
             map.put("bargain_amount", 0);
             map.put("response_driver_ip", "10.1.16.60");
 
-        JSONObject jsonObject = psfDispatchService.driverResponse(map);
+        JSONObject jsonObject = ghtPsfService.driverResponse(map);
         System.out.println(JSON.toJSONString(jsonObject));
         resultMap.put("response",JSON.toJSONString(jsonObject));
         return resultMap;
@@ -374,20 +414,31 @@ public class GhtController {
     // http://localhost:8080/createOrder/1/2
     // dispatch/getDispatchDetail/{order_id}/{round}
 
-    @RequestMapping(value = "dispatch/getDispatchDetail/{order_id}/{round}")
+    @RequestMapping(value = "ght/dispatch/getDispatchDetail/{order_id}/{round}")
     public Object getDispatchDetail(@PathVariable long order_id,@PathVariable int round) {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
         map.put("order_id", order_id);
         map.put("round", round);
 
-        JSONObject jsonObject = psfDispatchService.getDispatchDetail(map);
+        JSONObject jsonObject = ghtPsfService.getDispatchDetail(map);
         System.out.println(JSON.toJSONString(jsonObject));
         resultMap.put("response",JSON.toJSONString(jsonObject));
         return resultMap;
     }
 
-
+    @RequestMapping(value = "ght/acceptCars/{order_id}/{round}")
+    public Object acceptCars(@PathVariable long order_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("order_id", order_id);
+        map.put("out_coord_type", "mars");
+        map.put("filter_driver_ids","");
+        JSONObject jsonObject = ghtPsfService.getAcceptCars(map);
+        System.out.println(jsonObject.toJSONString());
+        resultMap.put("acceptCars",jsonObject);
+        return resultMap;
+    }
 
 
 
@@ -399,14 +450,14 @@ public class GhtController {
     // http://localhost:8080/createOrder/1/2
     // http://localhost:8080/dispatch/getDriverCalendar/{driver_id}
 
-    @RequestMapping(value = "dispatch/getDriverCalendar/{driver_id}")
+    @RequestMapping(value = "ght/dispatch/getDriverCalendar/{driver_id}")
     public Object getDriverCalendar(@PathVariable int driver_id) {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
         map.put("driver_id", driver_id);
 
 
-        JSONObject jsonObject = psfDispatchService.getDriverCalendar(map);
+        JSONObject jsonObject = ghtPsfService.getDriverCalendar(map);
         System.out.println(JSON.toJSONString(jsonObject));
         resultMap.put("response",JSON.toJSONString(jsonObject));
         return resultMap;
