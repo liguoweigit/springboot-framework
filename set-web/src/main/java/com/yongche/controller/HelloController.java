@@ -259,6 +259,7 @@ public class HelloController {
         //2.司机决策订单
 //        try {
 //            Thread.sleep(5000);
+//            Thread.sleep(5000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
@@ -419,6 +420,58 @@ public class HelloController {
         resultMap.put("response",JSON.toJSONString(jsonObject));
         return resultMap;
     }
+
+
+
+
+
+
+    //获取司机接单列表
+
+
+    // http://localhost:8080/createOrder/1/2
+    // http://localhost:8080/dispatch/getAcceptCars/{order_id}
+
+    @RequestMapping(value = "dispatch/getAcceptCars/{order_id}")
+    public Object getAcceptCars(@PathVariable long order_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("order_id", order_id);
+        map.put("out_coord_type", "mars");
+        map.put("filter_driver_ids", "1140");
+        map.put("count", 5);
+
+        JSONObject jsonObject = psfDispatchService.getAcceptCars(map);
+        System.out.println(JSON.toJSONString(jsonObject));
+        resultMap.put("response",JSON.toJSONString(jsonObject));
+        return resultMap;
+    }
+
+
+
+    //获取派单的状态
+
+
+    // http://localhost:8080/createOrder/1/2
+    // http://localhost:8080/dispatch/getDispatchStatus/{service_order_id}
+
+    @RequestMapping(value = "dispatch/getDispatchStatus/{service_order_id}")
+    public Object getDispatchStatus(@PathVariable long service_order_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("order_id", service_order_id);
+
+
+        JSONObject jsonObject = psfDispatchService.getDispatchStatus(map);
+        System.out.println(JSON.toJSONString(jsonObject));
+        resultMap.put("response",JSON.toJSONString(jsonObject));
+        return resultMap;
+    }
+
+
+
+
+
 
 }
 
