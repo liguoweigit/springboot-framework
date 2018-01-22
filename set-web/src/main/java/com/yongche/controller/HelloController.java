@@ -422,5 +422,39 @@ public class HelloController {
         return resultMap;
     }
 
+
+
+
+
+
+    //获取司机接单列表
+
+
+    // http://localhost:8080/createOrder/1/2
+    // http://localhost:8080/dispatch/getAcceptCars/{order_id}
+
+    @RequestMapping(value = "dispatch/getAcceptCars/{order_id}")
+    public Object getAcceptCars(@PathVariable long order_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("order_id", order_id);
+        map.put("out_coord_type", "mars");
+        map.put("filter_driver_ids", "1140");
+        map.put("count", 5);
+
+        JSONObject jsonObject = psfDispatchService.getAcceptCars(map);
+        System.out.println(JSON.toJSONString(jsonObject));
+        resultMap.put("response",JSON.toJSONString(jsonObject));
+        return resultMap;
+    }
+
+
+
+
+
+
+
+
+
 }
 
